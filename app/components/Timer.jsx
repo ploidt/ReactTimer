@@ -10,13 +10,13 @@ var Timer = React.createClass({
     };
   },
   componentDidUpdate: function (prevProps, prevState) {
-    if (this.state.timerStatus != prevState.timerStatus) {
+    if (this.state.timerStatus !== prevState.timerStatus) {
       switch (this.state.timerStatus) {
         case 'started':
-          this.startTimer();
+          this.handleStart();
           break;
         case 'stopped':
-          this.setState({count:0});
+          this.setState({count: 0});
         case 'paused':
           clearInterval(this.timer);
           this.timer = undefined;
@@ -26,38 +26,27 @@ var Timer = React.createClass({
   },
   componentWillUnmount: function () {
     clearInterval(this.timer);
-    this.timer = undefined;
   },
-  startTimer: function () {
-    this.timer = setInterval( () => {
-      var newCount = this.state.count + 1;
+  handleStart: function () {
+    this.timer = setInterval(() => {
       this.setState({
-        count: newCount >= 0 ? newCount : 0
+        count: this.state.count + 1
       });
-
-      if(newCount === 0){
-        this.setState({timerStatus: 'stopped'});
-      }
     }, 1000);
   },
-  handleSetCountdown: function (seconds) {
-    this.setState({
-      count: seconds,
-      timerStatus: 'started'
-    })
-  },
-  handleStatusChange: function (newStatus){
-    this.setState({timerStatus: newStatus});
+  handleStatusChange: function (newTimerStatus) {
+    this.setState({timerStatus: newTimerStatus});
   },
   render: function () {
     var {count, timerStatus} = this.state;
+
     return (
       <div>
         <h1 className="page-title">Timer App</h1>
         <Clock totalSeconds={count}/>
-        <Controls timerStatus={timerStatus} onStatusChange={this.handleStatusChange}/>
+        <Controls countdownStatus={timerStatus} onStatusChange={this.handleStatusChange}/>
       </div>
-    );
+    )
   }
 });
 
